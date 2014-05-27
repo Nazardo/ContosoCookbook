@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -48,6 +49,24 @@ namespace ContosoCookbook
             this.InitializeComponent();
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += navigationHelper_LoadState;
+            this.SizeChanged += OnSizeChanged;
+        }
+
+        void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateVisualState(e.NewSize.Width);
+        }
+
+        private void UpdateVisualState(double width)
+        {
+            if (width < 500)
+            {
+                VisualStateManager.GoToState(this, "SmallPortrait", false);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, ApplicationView.GetForCurrentView().Orientation.ToString(), false);
+            }
         }
 
         /// <summary>
@@ -111,6 +130,7 @@ namespace ContosoCookbook
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedTo(e);
+            UpdateVisualState(Window.Current.Bounds.Width);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

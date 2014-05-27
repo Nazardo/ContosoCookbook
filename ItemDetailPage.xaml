@@ -59,6 +59,20 @@
                     </StackPanel>
                 </Grid>
             </ScrollViewer>
+            <ScrollViewer x:Name="portraitContent" Grid.Row="1" Visibility="Collapsed">
+                <StackPanel Orientation="Vertical" Margin="110,0,20,20" x:Name="portraitStackPanel">
+                    <Image Width="400" Margin="0,20,0,10" Stretch="Uniform" Source="{Binding ImagePath}" HorizontalAlignment="Left"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="26.667" FontWeight="Light" Text="Preparation time:"/>
+                        <TextBlock FontSize="26.667" FontWeight="Light" Text="{Binding PrepTime}" Margin="10,0,8,0"/>
+                        <TextBlock FontSize="26.667" FontWeight="Light" Text="minutes"/>
+                    </StackPanel>
+                    <TextBlock FontSize="26.667" FontWeight="Light" Text="Ingredients" Margin="0,24,0,8"/>
+                    <TextBlock FontSize="20" FontWeight="Light" LineHeight="28" Text="{Binding Ingredients, Converter={StaticResource ListConverter}}" TextWrapping="Wrap" />
+                    <TextBlock FontSize="26.667" FontWeight="Light" Text="Directions" Margin="0,24,0,8"/>
+                    <TextBlock FontSize="20" FontWeight="Light" Text="{Binding Directions}" Margin="0,0,40,0" TextWrapping="Wrap" />
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
         <!-- Back button and page title -->
         <Grid>
@@ -69,5 +83,38 @@
             <AppBarButton x:Name="backButton" Icon="Back" Height="95" Margin="10,46,10,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=pageRoot}" Visibility="{Binding IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Mode=Self}}" AutomationProperties.Name="Back" AutomationProperties.AutomationId="BackButton" AutomationProperties.ItemType="Navigation Button"/>
             <TextBlock x:Name="pageTitle" Text="{Binding Title}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
         </Grid>
+
+        <!-- Visual states for the page -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ApplicationViewStates">
+                <VisualState x:Name="Landscape"/>
+                <VisualState x:Name="Portrait">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="landscapeContent" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="portraitContent" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="portraitStackPanel" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="110,0,20,20"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="SmallPortrait">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="landscapeContent" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="portraitContent" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="portraitStackPanel" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="11,0,20,20"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>
