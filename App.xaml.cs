@@ -1,5 +1,4 @@
 ﻿using ContosoCookbook.Common;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +8,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ApplicationSettings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -95,7 +95,22 @@ namespace ContosoCookbook
             }
             // Ensure the current window is active
             Window.Current.Activate();
+
+            // Add commands to the settings pane
+            SettingsPane.GetForCurrentView().CommandsRequested += OnCommandsRequested;
         }
+
+        void OnCommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
+        {
+            // Add an About command to the settings pane
+            var about = new SettingsCommand("about", "About", (handler) => new AboutSettingsFlyout().Show());
+            args.Request.ApplicationCommands.Add(about);
+
+            // Add a preferences command to the settings pane
+            var preferences = new SettingsCommand("preferences", "Preferences", (handler) => new PreferencesSettingsFlyout().Show());
+            args.Request.ApplicationCommands.Add(preferences);
+        }
+
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails

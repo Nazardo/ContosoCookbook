@@ -134,8 +134,17 @@ namespace ContosoCookbook.Data
 
             bool useLocalData = false;
 
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(_key))
-                useLocalData = (bool)ApplicationData.Current.LocalSettings.Values[_key];
+            //// Local settings
+            //if (ApplicationData.Current.LocalSettings.Values.ContainsKey(_key))
+            //{
+            //    useLocalData = (bool)ApplicationData.Current.LocalSettings.Values[_key];
+            //}
+
+            // Roaming settings
+            if (ApplicationData.Current.RoamingSettings.Values.ContainsKey(_key))
+            {
+                useLocalData = (bool)ApplicationData.Current.RoamingSettings.Values[_key];
+            }
 
             string jsonText = null;
 
