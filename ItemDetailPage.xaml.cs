@@ -7,6 +7,8 @@ using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Capture;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -29,6 +31,9 @@ namespace ContosoCookbook
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
+
+        private StorageFile _photo; // Photo file to share
+        private StorageFile _video; // Video file to share
 
         /// <summary>
         /// NavigationHelper is used on each page to aid in navigation and 
@@ -83,36 +88,68 @@ namespace ContosoCookbook
         private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
-            var item = await RecipeDataSource.GetItemAsync((String)e.NavigationParameter);
+            RecipeDataItem item = await RecipeDataSource.GetItemAsync((String)e.NavigationParameter);
             this.DefaultViewModel["Item"] = item;
         }
 
-        private async void OnShootPhoto(object sender, RoutedEventArgs e) {
-            await new MessageDialog("You will shoot a photo soon...").ShowAsync();
+        private async void OnShootPhoto(object sender, RoutedEventArgs e)
+        {
+            CameraCaptureUI camera = new CameraCaptureUI();
+            StorageFile file = await camera.CaptureFileAsync(CameraCaptureUIMode.Photo);
+            if (file != null)
+            {
+                _photo = file; DataTransferManager.ShowShareUI();
+            }
         }
 
         private async void OnShootVideo(object sender, RoutedEventArgs e)
         {
-            await new MessageDialog("You will shoot a video soon...").ShowAsync();
+            CameraCaptureUI camera = new CameraCaptureUI();
+            camera.VideoSettings.Format = CameraCaptureUIVideoFormat.Wmv;
+            StorageFile file = await camera.CaptureFileAsync(CameraCaptureUIMode.Video);
+            if (file != null)
+            {
+                _video = file; DataTransferManager.ShowShareUI();
+            }
         }
 
         void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
-            var request = args.Request;
-            var item = (RecipeDataItem)contentRegion.DataContext;
+            DataRequest request = args.Request;
+            //var item = (RecipeDataItem)this.flipView.SelectedItem;
+            RecipeDataItem item = (RecipeDataItem)contentRegion.DataContext;
             request.Data.Properties.Title = item.Title;
-            request.Data.Properties.Description = "Recipe ingredients and directions";
+            if (_photo != null)
+            {
+                request.Data.Properties.Description = "Recipe photo";
+                var reference = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromFile(_photo);
+                request.Data.Properties.Thumbnail = reference;
+                request.Data.SetBitmap(reference);
+                _photo = null;
+            }
+            else if (_video != null)
+            {
+                request.Data.Properties.Description = "Recipe video";
+                List<StorageFile> items = new List<StorageFile>();
+                items.Add(_video);
+                request.Data.SetStorageItems(items);
+                _video = null;
+            }
+            else
+            {
+                request.Data.Properties.Description = "Recipe ingredients and directions";
 
-            // Share recipe text
-            var recipe = "\r\nINGREDIENTS\r\n";
-            recipe += String.Join("\r\n", item.Ingredients);
-            recipe += ("\r\n\r\nDIRECTIONS\r\n" + item.Directions);
-            request.Data.SetText(recipe);
+                // Share recipe text
+                string recipe = "\r\nINGREDIENTS\r\n";
+                recipe += String.Join("\r\n", item.Ingredients);
+                recipe += ("\r\n\r\nDIRECTIONS\r\n" + item.Directions);
+                request.Data.SetText(recipe);
 
-            // Share recipe image
-            var reference = RandomAccessStreamReference.CreateFromUri(new Uri(item.ImagePath));
-            request.Data.Properties.Thumbnail = reference;
-            request.Data.SetBitmap(reference);
+                // Share recipe image
+                var reference = RandomAccessStreamReference.CreateFromUri(new Uri(item.ImagePath));
+                request.Data.Properties.Thumbnail = reference;
+                request.Data.SetBitmap(reference);
+            }
         }
 
         #region NavigationHelper registration
