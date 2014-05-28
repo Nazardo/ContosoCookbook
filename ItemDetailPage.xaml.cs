@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -80,6 +81,15 @@ namespace ContosoCookbook
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
             var item = await RecipeDataSource.GetItemAsync((String)e.NavigationParameter);
             this.DefaultViewModel["Item"] = item;
+        }
+
+        private async void OnShootPhoto(object sender, RoutedEventArgs e) {
+            await new MessageDialog("You will shoot a photo soon...").ShowAsync();
+        }
+
+        private async void OnShootVideo(object sender, RoutedEventArgs e)
+        {
+            await new MessageDialog("You will shoot a video soon...").ShowAsync();
         }
 
         #region NavigationHelper registration

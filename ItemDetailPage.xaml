@@ -117,4 +117,16 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Icon="Camera" Label="Share">
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Photo" Click="OnShootPhoto" />
+                        <MenuFlyoutItem Text="Video" Click="OnShootVideo" />
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>

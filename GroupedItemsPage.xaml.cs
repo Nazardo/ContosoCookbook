@@ -50,6 +50,18 @@ namespace ContosoCookbook
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += navigationHelper_LoadState;
             this.SizeChanged += OnSizeChanged;
+            RecipeSearchBox.QuerySubmitted += OnQuerySubmitted;
+            RecipeSearchBox.SuggestionsRequested += OnSuggestionsRequested;
+        }
+
+        void OnQuerySubmitted(SearchBox sender, SearchBoxQuerySubmittedEventArgs args)
+        {
+            this.Frame.Navigate(typeof(SearchResultsPage), args.QueryText);
+        }
+
+        void OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
+        {
+            string[] terms = { "salt", "pepper", "water", "egg", "vinegar", "flour", "rice", "sugar", "oil" }; var query = terms.Where(x => x.StartsWith(args.QueryText, StringComparison.OrdinalIgnoreCase)); args.Request.SearchSuggestionCollection.AppendQuerySuggestions(query);
         }
 
         void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -85,6 +97,7 @@ namespace ContosoCookbook
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
             var recipeDataGroups = await RecipeDataSource.GetGroupsAsync();
             this.DefaultViewModel["Groups"] = recipeDataGroups;
+            this.groupGridView.ItemsSource = this.groupedItemsViewSource.View.CollectionGroups;
         }
 
         /// <summary>

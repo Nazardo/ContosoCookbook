@@ -40,61 +40,74 @@
             <RowDefinition Height="140"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
-        <!-- Horizontal scrolling grid -->
-        <GridView
+        <SemanticZoom Grid.Row="1" >
+            <SemanticZoom.ZoomedInView>
+                <!-- Horizontal scrolling grid -->
+                <GridView
             x:Name="itemGridView"
             AutomationProperties.AutomationId="ItemGridView"
             AutomationProperties.Name="Grouped Items"
-            Grid.RowSpan="2"
-            Padding="116,137,40,46"
+            Padding="116,0,40,46"
             ItemsSource="{Binding Source={StaticResource groupedItemsViewSource}}"
             SelectionMode="None"
             IsSwipeEnabled="false"
             IsItemClickEnabled="True"
             ItemClick="ItemView_ItemClick">
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <Grid HorizontalAlignment="Left" Width="320" Height="240">
-                        <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                            <Image Source="{Binding ImagePath}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
-                        </Border>
-                        <StackPanel VerticalAlignment="Bottom" Background="{ThemeResource ListViewItemOverlayBackgroundThemeBrush}">
-                            <TextBlock Text="{Binding Title}" Foreground="{ThemeResource ListViewItemOverlayForegroundThemeBrush}" Style="{StaticResource TitleTextBlockStyle}" Height="48" Margin="15,0,15,0"/>
-                            <!--<TextBlock Text="{Binding Subtitle}" Foreground="{ThemeResource ListViewItemOverlaySecondaryForegroundThemeBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap" Margin="15,0,15,10"/>-->
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-            <GridView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsWrapGrid GroupPadding="0,0,70,0"/>
-                </ItemsPanelTemplate>
-            </GridView.ItemsPanel>
-            <GridView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
+                    <GridView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="0,0,0,2">
-                                <Button Foreground="{ThemeResource ApplicationHeaderForegroundThemeBrush}"
+                            <Grid HorizontalAlignment="Left" Width="320" Height="240">
+                                <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <Image Source="{Binding ImagePath}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
+                                </Border>
+                                <StackPanel VerticalAlignment="Bottom" Background="{ThemeResource ListViewItemOverlayBackgroundThemeBrush}">
+                                    <TextBlock Text="{Binding Title}" Foreground="{ThemeResource ListViewItemOverlayForegroundThemeBrush}" Style="{StaticResource TitleTextBlockStyle}" Height="48" Margin="15,0,15,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid GroupPadding="0,0,70,0"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,2">
+                                        <Button Foreground="{ThemeResource ApplicationHeaderForegroundThemeBrush}"
                                     AutomationProperties.Name="Group Title"
                                     Click="Header_Click"
                                     Style="{StaticResource TextBlockButtonStyle}" >
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Title}" Margin="0,-11,10,10" Style="{StaticResource SubheaderTextBlockStyle}" TextWrapping="NoWrap" />
-                                        <TextBlock Text="{StaticResource ChevronGlyph}" FontFamily="Segoe UI Symbol" Margin="0,-11,0,10" Style="{StaticResource SubheaderTextBlockStyle}" TextWrapping="NoWrap" />
-                                    </StackPanel>
-                                </Button>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Title}" Margin="0,-11,10,10" Style="{StaticResource SubheaderTextBlockStyle}" TextWrapping="NoWrap" />
+                                                <TextBlock Text="{StaticResource ChevronGlyph}" FontFamily="Segoe UI Symbol" Margin="0,-11,0,10" Style="{StaticResource SubheaderTextBlockStyle}" TextWrapping="NoWrap" />
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </GridView.GroupStyle>
+                </GridView>
+            </SemanticZoom.ZoomedInView>
+            <SemanticZoom.ZoomedOutView>
+                <GridView x:Name="groupGridView" Margin="116,0,40,46">
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Image Source="{Binding Group.GroupImagePath}" Width="250" Height="500" Stretch="UniformToFill" />
+                                <TextBlock Text="{Binding Group.Title}" Foreground="White" Style="{StaticResource TitleTextBlockStyle}" FontSize="28" Margin="12"/>
+                                <TextBlock Text="{Binding Group.Items.Count}" Foreground="White" Opacity="0.5" Style="{StaticResource TitleTextBlockStyle}" FontSize="96" Margin="12,64,24,12" HorizontalAlignment="Right"/>
                             </Grid>
                         </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                </GroupStyle>
-            </GridView.GroupStyle>
-        </GridView>
-
+                    </GridView.ItemTemplate>
+                </GridView>
+            </SemanticZoom.ZoomedOutView>
+        </SemanticZoom>
         <!-- Vertical scrolling list used in portrait mode -->
-        <ListView x:Name="itemListView" AutomationProperties.AutomationId="ItemListView" AutomationProperties.Name="Items In Group" TabIndex="1" Grid.Row="1" Visibility="Collapsed" Padding="116,0,40,46" ItemsSource="{Binding Source={StaticResource groupedItemsViewSource}}" SelectionMode="None"
-                  IsItemClickEnabled="True" ItemClick="ItemView_ItemClick">
+        <ListView     x:Name="itemListView"     AutomationProperties.AutomationId="ItemListView"     AutomationProperties.Name="Items In Group"     TabIndex="1"     Grid.Row="1"     Visibility="Collapsed"     Padding="116,0,40,46"     ItemsSource="{Binding Source={StaticResource groupedItemsViewSource}}"     SelectionMode="None" 
+                      IsItemClickEnabled="True"     ItemClick="ItemView_ItemClick">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,10">
@@ -121,7 +134,7 @@
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
                             <Grid Margin="1,0,0,6">
-                                <Button Foreground="{ThemeResource ApplicationHeaderForegroundThemeBrush}" AutomationProperties.Name="Group Title" Click="Header_Click" Style="{StaticResource TextBlockButtonStyle}" >
+                                <Button Foreground="{ThemeResource ApplicationHeaderForegroundThemeBrush}"                             AutomationProperties.Name="Group Title"                             Click="Header_Click"                             Style="{StaticResource TextBlockButtonStyle}" >
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="{Binding Title}" Margin="3,-7,10,10" Style="{StaticResource SubheaderTextBlockStyle}" TextWrapping="NoWrap" />
                                         <TextBlock Text="{StaticResource ChevronGlyph}" FontFamily="Segoe UI Symbol" Margin="0,-7,0,10" Style="{StaticResource SubheaderTextBlockStyle}" TextWrapping="NoWrap" />
@@ -148,8 +161,8 @@
                         AutomationProperties.ItemType="Navigation Button"/>
             <TextBlock x:Name="pageTitle" Text="{StaticResource AppName}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
+            <SearchBox x:Name="RecipeSearchBox" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,20,40" VerticalAlignment="Bottom" Width="250" PlaceholderText="Search Contoso Cookbook"/>
         </Grid>
-
         <!-- Visual states for the page -->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ApplicationViewStates">
