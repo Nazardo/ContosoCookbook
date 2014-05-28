@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -51,6 +53,8 @@ namespace ContosoCookbook
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += navigationHelper_LoadState;
             this.SizeChanged += (s, e) => UpdateVisualState(e.NewSize.Width);
+            // Register for DataRequested events
+            DataTransferManager.GetForCurrentView().DataRequested += OnDataRequested;
         }
 
         private void UpdateVisualState(double width)
@@ -90,6 +94,25 @@ namespace ContosoCookbook
         private async void OnShootVideo(object sender, RoutedEventArgs e)
         {
             await new MessageDialog("You will shoot a video soon...").ShowAsync();
+        }
+
+        void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            var request = args.Request;
+            var item = (RecipeDataItem)contentRegion.DataContext;
+            request.Data.Properties.Title = item.Title;
+            request.Data.Properties.Description = "Recipe ingredients and directions";
+
+            // Share recipe text
+            var recipe = "\r\nINGREDIENTS\r\n";
+            recipe += String.Join("\r\n", item.Ingredients);
+            recipe += ("\r\n\r\nDIRECTIONS\r\n" + item.Directions);
+            request.Data.SetText(recipe);
+
+            // Share recipe image
+            var reference = RandomAccessStreamReference.CreateFromUri(new Uri(item.ImagePath));
+            request.Data.Properties.Thumbnail = reference;
+            request.Data.SetBitmap(reference);
         }
 
         #region NavigationHelper registration
