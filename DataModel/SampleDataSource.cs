@@ -101,7 +101,7 @@ namespace ContosoCookbook.Data
         {
             await _sampleDataSource.GetSampleDataAsync();
             // Simple linear search is acceptable for small data sets
-            var matches = _sampleDataSource.Groups.Where((group) => group.UniqueId.Equals(uniqueId));
+            IEnumerable<SampleDataGroup> matches = _sampleDataSource.Groups.Where((group) => group.UniqueId.Equals(uniqueId));
             if (matches.Count() == 1) return matches.First();
             return null;
         }
@@ -110,7 +110,7 @@ namespace ContosoCookbook.Data
         {
             await _sampleDataSource.GetSampleDataAsync();
             // Simple linear search is acceptable for small data sets
-            var matches = _sampleDataSource.Groups.SelectMany(group => group.Items).Where((item) => item.UniqueId.Equals(uniqueId));
+            IEnumerable<SampleDataItem> matches = _sampleDataSource.Groups.SelectMany(group => group.Items).Where((item) => item.UniqueId.Equals(uniqueId));
             if (matches.Count() == 1) return matches.First();
             return null;
         }

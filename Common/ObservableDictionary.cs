@@ -28,7 +28,7 @@ namespace ContosoCookbook.Common
 
         private void InvokeMapChanged(CollectionChange change, string key)
         {
-            var eventHandler = MapChanged;
+            MapChangedEventHandler<string,object> eventHandler = MapChanged;
             if (eventHandler != null)
             {
                 eventHandler(this, new ObservableDictionaryChangedEventArgs(change, key));
@@ -83,9 +83,9 @@ namespace ContosoCookbook.Common
 
         public void Clear()
         {
-            var priorKeys = this._dictionary.Keys.ToArray();
+            string[] priorKeys = this._dictionary.Keys.ToArray();
             this._dictionary.Clear();
-            foreach (var key in priorKeys)
+            foreach (string key in priorKeys)
             {
                 this.InvokeMapChanged(CollectionChange.ItemRemoved, key);
             }
@@ -139,7 +139,7 @@ namespace ContosoCookbook.Common
         public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
             int arraySize = array.Length;
-            foreach (var pair in this._dictionary)
+            foreach (KeyValuePair<string, object> pair in this._dictionary)
             {
                 if (arrayIndex >= arraySize) break;
                 array[arrayIndex++] = pair;

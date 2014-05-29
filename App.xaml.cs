@@ -103,11 +103,11 @@ namespace ContosoCookbook
         void OnCommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
         {
             // Add an About command to the settings pane
-            var about = new SettingsCommand("about", "About", (handler) => new AboutSettingsFlyout().Show());
+            SettingsCommand about = new SettingsCommand("about", "About", (handler) => new AboutSettingsFlyout().Show());
             args.Request.ApplicationCommands.Add(about);
 
             // Add a preferences command to the settings pane
-            var preferences = new SettingsCommand("preferences", "Preferences", (handler) => new PreferencesSettingsFlyout().Show());
+            SettingsCommand preferences = new SettingsCommand("preferences", "Preferences", (handler) => new PreferencesSettingsFlyout().Show());
             args.Request.ApplicationCommands.Add(preferences);
         }
 
@@ -131,7 +131,7 @@ namespace ContosoCookbook
         /// <param name="e">Details about the suspend request.</param>
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
+            SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
             deferral.Complete();
         }

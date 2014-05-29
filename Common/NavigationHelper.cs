@@ -30,7 +30,7 @@ namespace ContosoCookbook.Common
     ///     public MyPage()
     ///     {
     ///         this.InitializeComponent();
-    ///         var navigationHelper = new NavigationHelper(this);
+    ///         NavigationHelper navigationHelper = new NavigationHelper(this);
     ///         this.navigationHelper.LoadState += navigationHelper_LoadState;
     ///         this.navigationHelper.SaveState += navigationHelper_SaveState;
     ///     }
@@ -225,7 +225,7 @@ namespace ContosoCookbook.Common
         private void CoreDispatcher_AcceleratorKeyActivated(CoreDispatcher sender,
             AcceleratorKeyEventArgs e)
         {
-            var virtualKey = e.VirtualKey;
+            VirtualKey virtualKey = e.VirtualKey;
 
             // Only investigate further when Left, Right, or the dedicated Previous or Next keys
             // are pressed
@@ -234,8 +234,8 @@ namespace ContosoCookbook.Common
                 (virtualKey == VirtualKey.Left || virtualKey == VirtualKey.Right ||
                 (int)virtualKey == 166 || (int)virtualKey == 167))
             {
-                var coreWindow = Window.Current.CoreWindow;
-                var downState = CoreVirtualKeyStates.Down;
+                CoreWindow coreWindow = Window.Current.CoreWindow;
+                CoreVirtualKeyStates downState = CoreVirtualKeyStates.Down;
                 bool menuKey = (coreWindow.GetKeyState(VirtualKey.Menu) & downState) == downState;
                 bool controlKey = (coreWindow.GetKeyState(VirtualKey.Control) & downState) == downState;
                 bool shiftKey = (coreWindow.GetKeyState(VirtualKey.Shift) & downState) == downState;
@@ -269,7 +269,7 @@ namespace ContosoCookbook.Common
         private void CoreWindow_PointerPressed(CoreWindow sender,
             PointerEventArgs e)
         {
-            var properties = e.CurrentPoint.Properties;
+            Windows.UI.Input.PointerPointProperties properties = e.CurrentPoint.Properties;
 
             // Ignore button chords with the left, right, and middle buttons
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
@@ -316,14 +316,14 @@ namespace ContosoCookbook.Common
         /// property provides the group to be displayed.</param>
         public void OnNavigatedTo(NavigationEventArgs e)
         {
-            var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
+            Dictionary<string, object> frameState = SuspensionManager.SessionStateForFrame(this.Frame);
             this._pageKey = "Page-" + this.Frame.BackStackDepth;
 
             if (e.NavigationMode == NavigationMode.New)
             {
                 // Clear existing state for forward navigation when adding a new page to the
                 // navigation stack
-                var nextPageKey = this._pageKey;
+                string nextPageKey = this._pageKey;
                 int nextPageIndex = this.Frame.BackStackDepth;
                 while (frameState.Remove(nextPageKey))
                 {
@@ -358,8 +358,8 @@ namespace ContosoCookbook.Common
         /// property provides the group to be displayed.</param>
         public void OnNavigatedFrom(NavigationEventArgs e)
         {
-            var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
-            var pageState = new Dictionary<String, Object>();
+            Dictionary<string, object> frameState = SuspensionManager.SessionStateForFrame(this.Frame),
+                                       pageState = new Dictionary<String, Object>();
             if (this.SaveState != null)
             {
                 this.SaveState(this, new SaveStateEventArgs(pageState));

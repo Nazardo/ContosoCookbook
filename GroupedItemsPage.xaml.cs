@@ -61,7 +61,9 @@ namespace ContosoCookbook
 
         void OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
-            string[] terms = { "salt", "pepper", "water", "egg", "vinegar", "flour", "rice", "sugar", "oil" }; var query = terms.Where(x => x.StartsWith(args.QueryText, StringComparison.OrdinalIgnoreCase)); args.Request.SearchSuggestionCollection.AppendQuerySuggestions(query);
+            string[] terms = { "salt", "pepper", "water", "egg", "vinegar", "flour", "rice", "sugar", "oil" };
+            IEnumerable<string> query = terms.Where(x => x.StartsWith(args.QueryText, StringComparison.OrdinalIgnoreCase));
+            args.Request.SearchSuggestionCollection.AppendQuerySuggestions(query);
         }
 
         void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -95,7 +97,7 @@ namespace ContosoCookbook
         private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
-            var recipeDataGroups = await RecipeDataSource.GetGroupsAsync();
+            IEnumerable<RecipeDataGroup> recipeDataGroups = await RecipeDataSource.GetGroupsAsync();
             this.DefaultViewModel["Groups"] = recipeDataGroups;
             this.groupGridView.ItemsSource = this.groupedItemsViewSource.View.CollectionGroups;
         }
@@ -108,11 +110,11 @@ namespace ContosoCookbook
         void Header_Click(object sender, RoutedEventArgs e)
         {
             // Determine what group the Button instance represents
-            var group = (sender as FrameworkElement).DataContext;
+            RecipeDataGroup group = (sender as FrameworkElement).DataContext as RecipeDataGroup;
 
             // Navigate to the appropriate destination page, configuring the new page
             // by passing required information as a navigation parameter
-            this.Frame.Navigate(typeof(GroupDetailPage), ((RecipeDataGroup)group).UniqueId);
+            this.Frame.Navigate(typeof(GroupDetailPage), group.UniqueId);
         }
 
         /// <summary>
@@ -125,7 +127,7 @@ namespace ContosoCookbook
         {
             // Navigate to the appropriate destination page, configuring the new page
             // by passing required information as a navigation parameter
-            var itemId = ((RecipeDataItem)e.ClickedItem).UniqueId;
+            string itemId = ((RecipeDataItem)e.ClickedItem).UniqueId;
             this.Frame.Navigate(typeof(ItemDetailPage), itemId);
         }
 

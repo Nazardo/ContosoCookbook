@@ -76,7 +76,7 @@ namespace ContosoCookbook.Common
         /// </summary>
         public void RaiseCanExecuteChanged()
         {
-            var handler = CanExecuteChanged;
+            EventHandler handler = CanExecuteChanged;
             if (handler != null)
             {
                 handler(this, EventArgs.Empty);

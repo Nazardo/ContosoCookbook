@@ -113,7 +113,7 @@ namespace ContosoCookbook.Data
         {
             await _recipeDataSource.GetRecipeDataAsync();
             // Simple linear search is acceptable for small data sets
-            var matches = _recipeDataSource.Groups.Where((group) => group.UniqueId.Equals(uniqueId));
+            IEnumerable<RecipeDataGroup> matches = _recipeDataSource.Groups.Where((group) => group.UniqueId.Equals(uniqueId));
             if (matches.Count() == 1) return matches.First();
             return null;
         }
@@ -122,7 +122,7 @@ namespace ContosoCookbook.Data
         {
             await _recipeDataSource.GetRecipeDataAsync();
             // Simple linear search is acceptable for small data sets
-            var matches = _recipeDataSource.Groups.SelectMany(group => group.Items).Where((item) => item.UniqueId.Equals(uniqueId));
+            IEnumerable<RecipeDataItem> matches = _recipeDataSource.Groups.SelectMany(group => group.Items).Where((item) => item.UniqueId.Equals(uniqueId));
             if (matches.Count() == 1) return matches.First();
             return null;
         }
@@ -157,14 +157,14 @@ namespace ContosoCookbook.Data
             else
             {
                 _baseUri = "http://contosorecipes8.blob.core.windows.net/";
-                var cts = new CancellationTokenSource();
+                CancellationTokenSource cts = new CancellationTokenSource();
                 cts.CancelAfter(5000); // Wait up to 5 seconds
 
                 bool isTimedOut = false;
                 try
                 {
-                    var client = new HttpClient();
-                    var response = await client.GetAsync(new Uri(_baseUri + "BlueRecipes")).AsTask(cts.Token);
+                    HttpClient client = new HttpClient();
+                    HttpResponseMessage response = await client.GetAsync(new Uri(_baseUri + "BlueRecipes")).AsTask(cts.Token);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -209,7 +209,7 @@ namespace ContosoCookbook.Data
                         JsonObject itemObject = itemValue.GetObject();
 
                         JsonArray array = itemObject["Ingredients"].GetArray();
-                        var ingredients = (from i in array select i.GetString());
+                        IEnumerable<string> ingredients = (from i in array select i.GetString());
 
                         group.Items.Add(new RecipeDataItem(
                             itemObject["UniqueId"].GetString(),

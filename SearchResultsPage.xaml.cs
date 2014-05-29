@@ -68,7 +68,7 @@ namespace ContosoCookbook
         /// session.  This will be null the first time a page is visited.</param>
         private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            var queryText = e.NavigationParameter as String;
+            string queryText = e.NavigationParameter as String;
 
             //       Application-specific searching logic.  The search process is responsible for
             //       creating a list of user-selectable result categories:
@@ -79,16 +79,17 @@ namespace ContosoCookbook
             //       order to start in an active state.  Results for the active filter are provided
             //       in Filter_SelectionChanged below.
 
-            var filterList = new List<Filter>(); filterList.Add(new Filter("All", 0, true));
+            List<Filter> filterList = new List<Filter>();
+            filterList.Add(new Filter("All", 0, true));
             // Search recipes and tabulate results
-            var groups = await RecipeDataSource.GetGroupsAsync();
-            var all = new List<RecipeDataItem>();
+            IEnumerable<RecipeDataGroup> groups = await RecipeDataSource.GetGroupsAsync();
+            List<RecipeDataItem> all = new List<RecipeDataItem>();
             _results.Add("All", all);
-            foreach (var group in groups)
+            foreach (RecipeDataGroup group in groups)
             {
-                var items = new List<RecipeDataItem>();
+                List<RecipeDataItem> items = new List<RecipeDataItem>();
                 _results.Add(group.Title, items);
-                var matches = group.Items
+                RecipeDataItem[] matches = group.Items
                     .Where(x => x.Title.IndexOf(queryText, StringComparison.OrdinalIgnoreCase) >= 0 || x.Directions.IndexOf(queryText, StringComparison.OrdinalIgnoreCase) >= 0)
                     .ToArray();
                 items.AddRange(matches);
@@ -110,7 +111,7 @@ namespace ContosoCookbook
         /// <param name="e">Event data describing how the RadioButton was selected.</param>
         void Filter_Checked(object sender, RoutedEventArgs e)
         {
-            var filter = (sender as FrameworkElement).DataContext;
+            object filter = (sender as FrameworkElement).DataContext;
 
             // Mirror the change into the CollectionViewSource.
             // This is most likely not needed.
@@ -120,7 +121,7 @@ namespace ContosoCookbook
             }
 
             // Determine what filter was selected
-            var selectedFilter = filter as Filter;
+            Filter selectedFilter = filter as Filter;
             if (selectedFilter != null)
             {
                 // Mirror the results into the corresponding Filter object to allow the
@@ -255,7 +256,7 @@ namespace ContosoCookbook
             /// that support <see cref="CallerMemberNameAttribute"/>.</param>
             private void OnPropertyChanged([CallerMemberName] string propertyName = null)
             {
-                var eventHandler = this.PropertyChanged;
+                PropertyChangedEventHandler eventHandler = this.PropertyChanged;
                 if (eventHandler != null)
                 {
                     eventHandler(this, new PropertyChangedEventArgs(propertyName));

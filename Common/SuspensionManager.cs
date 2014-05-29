@@ -60,7 +60,7 @@ namespace ContosoCookbook.Common
             try
             {
                 // Save the navigation state for all registered frames
-                foreach (var weakFrameReference in _registeredFrames)
+                foreach (WeakReference<Frame> weakFrameReference in _registeredFrames)
                 {
                     Frame frame;
                     if (weakFrameReference.TryGetTarget(out frame))
@@ -116,7 +116,7 @@ namespace ContosoCookbook.Common
                 }
 
                 // Restore any registered frames to their saved state
-                foreach (var weakFrameReference in _registeredFrames)
+                foreach (WeakReference<Frame> weakFrameReference in _registeredFrames)
                 {
                     Frame frame;
                     if (weakFrameReference.TryGetTarget(out frame) && (string)frame.GetValue(FrameSessionBaseKeyProperty) == sessionBaseKey)
@@ -215,11 +215,11 @@ namespace ContosoCookbook.Common
         /// <see cref="SessionState"/>.</returns>
         public static Dictionary<String, Object> SessionStateForFrame(Frame frame)
         {
-            var frameState = (Dictionary<String, Object>)frame.GetValue(FrameSessionStateProperty);
+            Dictionary<string, object> frameState = (Dictionary<String, Object>)frame.GetValue(FrameSessionStateProperty);
 
             if (frameState == null)
             {
-                var frameSessionKey = (String)frame.GetValue(FrameSessionStateKeyProperty);
+                string frameSessionKey = (string)frame.GetValue(FrameSessionStateKeyProperty);
                 if (frameSessionKey != null)
                 {
                     // Registered frames reflect the corresponding session state
@@ -241,7 +241,7 @@ namespace ContosoCookbook.Common
 
         private static void RestoreFrameNavigationState(Frame frame)
         {
-            var frameState = SessionStateForFrame(frame);
+            Dictionary<string, object> frameState = SessionStateForFrame(frame);
             if (frameState.ContainsKey("Navigation"))
             {
                 frame.SetNavigationState((String)frameState["Navigation"]);
@@ -250,7 +250,7 @@ namespace ContosoCookbook.Common
 
         private static void SaveFrameNavigationState(Frame frame)
         {
-            var frameState = SessionStateForFrame(frame);
+            Dictionary<string, object> frameState = SessionStateForFrame(frame);
             frameState["Navigation"] = frame.GetNavigationState();
         }
     }

@@ -116,13 +116,13 @@ namespace ContosoCookbook
         void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             DataRequest request = args.Request;
-            //var item = (RecipeDataItem)this.flipView.SelectedItem;
+            //RecipeDataItem item = (RecipeDataItem)this.flipView.SelectedItem;
             RecipeDataItem item = (RecipeDataItem)contentRegion.DataContext;
             request.Data.Properties.Title = item.Title;
             if (_photo != null)
             {
                 request.Data.Properties.Description = "Recipe photo";
-                var reference = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromFile(_photo);
+                RandomAccessStreamReference reference = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromFile(_photo);
                 request.Data.Properties.Thumbnail = reference;
                 request.Data.SetBitmap(reference);
                 _photo = null;
@@ -146,7 +146,7 @@ namespace ContosoCookbook
                 request.Data.SetText(recipe);
 
                 // Share recipe image
-                var reference = RandomAccessStreamReference.CreateFromUri(new Uri(item.ImagePath));
+                RandomAccessStreamReference reference = RandomAccessStreamReference.CreateFromUri(new Uri(item.ImagePath));
                 request.Data.Properties.Thumbnail = reference;
                 request.Data.SetBitmap(reference);
             }
