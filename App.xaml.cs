@@ -4,11 +4,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Networking.Connectivity;
+using Windows.Networking.PushNotifications;
+using Windows.Security.Cryptography;
+using Windows.Storage.Streams;
 using Windows.UI.ApplicationSettings;
+using Windows.UI.Notifications;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -16,6 +24,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Web.Http;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 
@@ -93,11 +102,79 @@ namespace ContosoCookbook
                 // parameter
                 rootFrame.Navigate(typeof(GroupedItemsPage), e.Arguments);
             }
+            if (!String.IsNullOrEmpty(e.Arguments))
+            {
+                // If the app was activated from a secondary tile, show the recipe
+                rootFrame.Navigate(typeof(ItemDetailPage), e.Arguments);
+            }
             // Ensure the current window is active
             Window.Current.Activate();
 
             // Add commands to the settings pane
             SettingsPane.GetForCurrentView().CommandsRequested += OnCommandsRequested;
+
+            // Clear tiles and badges
+            TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
+
+            // Register for push notifications if a connection is available
+            ConnectionProfile profile = NetworkInformation.GetInternetConnectionProfile();
+            if (profile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess)
+            {
+                await RegisterForPushNotifications();
+            }
+        }
+
+        private async Task RegisterForPushNotifications()
+        {
+            // we need to keep track of the caught exception
+            // because we cant' await on a message dialog in a catch block
+            Exception error = null;
+            try
+            {
+                PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                IBuffer buffer = CryptographicBuffer.ConvertStringToBinary(channel.Uri, BinaryStringEncoding.Utf8);
+                string uri = CryptographicBuffer.EncodeToBase64String(buffer);
+
+                HttpClient client = new HttpClient();
+                try
+                {
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    cts.CancelAfter(5000);
+                    // Wait up to 5 seconds
+                    var response = await client.GetAsync(new Uri("http://ContosoRecipes8.cloudapp.net?uri=" + uri + "&type=tile")).AsTask(cts.Token);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await new MessageDialog("Unable to open push notification channel (request failed)").ShowAsync();
+                    }
+                }
+                catch (OperationCanceledException timeOutException)
+                {
+                    error = timeOutException;
+                }
+                catch (Exception x)
+                {
+                    error = x;
+                }
+            }
+            catch (Exception x)
+            {
+                // Probably running in the simulator
+                error = x;
+            }
+
+            // handle errors if any
+            if (error != null)
+            {
+                if (error is OperationCanceledException)
+                {
+                    await new MessageDialog("Unable to open push notification channel (operation timed out)").ShowAsync();
+                }
+                else
+                {
+                    await new MessageDialog("Unable to open push notification channel. Are you running in the simulator?").ShowAsync();
+                }
+            }
         }
 
         void OnCommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)

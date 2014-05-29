@@ -119,14 +119,20 @@
     </Grid>
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton Icon="Camera" Label="Share">
-                <AppBarButton.Flyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem Text="Photo" Click="OnShootPhoto" />
-                        <MenuFlyoutItem Text="Video" Click="OnShootVideo" />
-                    </MenuFlyout>
-                </AppBarButton.Flyout>
-            </AppBarButton>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Icon="Camera" Label="Share">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Photo" Click="OnShootPhoto" />
+                            <MenuFlyoutItem Text="Video" Click="OnShootVideo" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton Icon="Clock" Label="Reminder" Click="OnReminder" />
+            </CommandBar.PrimaryCommands>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Icon="Pin" Label="Pin" Click="OnPinRecipe" />
+            </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
 </Page>

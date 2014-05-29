@@ -14,7 +14,8 @@
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>ContosoCookbook_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>Contoso.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>2589BFD4BEAF8F3AA5716A3AB996C675C9A79640</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -242,6 +243,7 @@
     <Content Include="Images\tiles\Italian_4_310_C.jpg" />
     <Content Include="Images\tiles\Italian_5_310_C.jpg" />
     <None Include="Common\ReadMe.txt" />
+    <None Include="Contoso.pfx" />
     <None Include="ContosoCookbook_TemporaryKey.pfx" />
     <Content Include="Assets\LargeLogo.scale-100.png" />
     <Content Include="Assets\MediumLogo.scale-100.png" />

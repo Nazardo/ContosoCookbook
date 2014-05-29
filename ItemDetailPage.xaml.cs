@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Notifications;
 using Windows.UI.Popups;
+using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -111,6 +114,36 @@ namespace ContosoCookbook
             {
                 _video = file; DataTransferManager.ShowShareUI();
             }
+        }
+
+        private async void OnReminder(object sender, RoutedEventArgs e)
+        {
+            RecipeDataItem dataItem = contentRegion.DataContext as RecipeDataItem;
+            ToastNotifier notifier = ToastNotificationManager.CreateToastNotifier();
+            // Make sure notifications are enabled
+            if (notifier.Setting != NotificationSetting.Enabled)
+            {
+                MessageDialog dialog = new MessageDialog("Notifications are currently disabled");
+                await dialog.ShowAsync();
+                return;
+            }
+            // Get a toast template and insert a text node containing a message
+            XmlDocument template = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
+            IXmlNode element = template.GetElementsByTagName("text")[0];
+            element.AppendChild(template.CreateTextNode("Reminder! Cook " + dataItem.Title));
+            // Schedule the toast to appear 10 seconds from now
+            DateTimeOffset date = DateTimeOffset.Now.AddSeconds(10);
+            ScheduledToastNotification stn = new ScheduledToastNotification(template, date); notifier.AddToSchedule(stn);
+        }
+
+        private async void OnPinRecipe(object sender, RoutedEventArgs e)
+        {
+            RecipeDataItem item = (RecipeDataItem)contentRegion.DataContext;
+            Uri uri = new Uri(item.TileImagePath);
+            // first parameter is TileId, changed from item.UniqueId to a random Guid
+            SecondaryTile tile = new SecondaryTile(new Guid().ToString(), item.Title, item.UniqueId, uri, TileSize.Square150x150);
+            tile.VisualElements.ShowNameOnSquare150x150Logo = true;
+            await tile.RequestCreateAsync();
         }
 
         void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
