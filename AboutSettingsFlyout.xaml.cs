@@ -28,7 +28,7 @@ namespace ContosoCookbook
         private void OnPurchaseButtonClicked(object sender, RoutedEventArgs e)
         {
             // Purchase the app
-            CurrentAppSimulator.RequestAppPurchaseAsync(false); 
+            IAsyncOperation<string> notAwaited = CurrentAppSimulator.RequestAppPurchaseAsync(false);
         }
     }
 }
