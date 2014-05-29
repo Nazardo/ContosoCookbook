@@ -115,6 +115,8 @@
     <Compile Include="Common\BooleanNegationConverter.cs" />
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\ListConverter.cs" />
+    <Compile Include="DataModel\AppLicenseDataSource.cs" />
+    <Compile Include="DataModel\ProductLicenseDataSource.cs" />
     <Compile Include="DataModel\RecipeDataSource.cs" />
     <Compile Include="GroupedItemsPage.xaml.cs">
       <DependentUpon>GroupedItemsPage.xaml</DependentUpon>
@@ -142,6 +144,9 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="DataModel\license.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\chinese\Chinese_1_150_C.jpg" />
     <Content Include="Images\chinese\Chinese_1_600_C.jpg" />
     <Content Include="Images\chinese\Chinese_2_150_C.jpg" />

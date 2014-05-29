@@ -8,11 +8,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Store;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
 using Windows.Networking.PushNotifications;
 using Windows.Security.Cryptography;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.ApplicationSettings;
 using Windows.UI.Notifications;
@@ -123,6 +125,10 @@ namespace ContosoCookbook
             {
                 await RegisterForPushNotifications();
             }
+
+            // Initialize CurrentAppSimulator for simulated app purchases
+            StorageFile license = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///DataModel/license.xml"));
+            await CurrentAppSimulator.ReloadSimulatorAsync(license);
         }
 
         private async Task RegisterForPushNotifications()

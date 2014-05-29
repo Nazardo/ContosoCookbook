@@ -238,5 +238,16 @@ namespace ContosoCookbook.Data
                 this.Groups.Clear();
             }
         }
+
+        public static async Task<string> GetItemGroupTitleAsync(string uniqueId)
+        {
+            await _recipeDataSource.GetRecipeDataAsync();
+            // Simple linear search is acceptable for small data sets
+            RecipeDataGroup group = (from g in _recipeDataSource.Groups
+                                     where (from b in g.Items select b.UniqueId).Contains(uniqueId)
+                                     select g).FirstOrDefault();
+            return (group != null) ? group.Title : null;
+        }
+
     }
 }

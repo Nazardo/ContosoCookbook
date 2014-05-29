@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Store;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -22,6 +23,12 @@ namespace ContosoCookbook
         public AboutSettingsFlyout()
         {
             this.InitializeComponent();
+        }
+
+        private void OnPurchaseButtonClicked(object sender, RoutedEventArgs e)
+        {
+            // Purchase the app
+            CurrentAppSimulator.RequestAppPurchaseAsync(false); 
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.Store;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -93,6 +94,11 @@ namespace ContosoCookbook
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
             RecipeDataItem item = await RecipeDataSource.GetItemAsync((String)e.NavigationParameter);
             this.DefaultViewModel["Item"] = item;
+
+            // Pass the title to the LicenseDataSource (important!)
+            string itemGroupTitle = await RecipeDataSource.GetItemGroupTitleAsync((String)e.NavigationParameter);
+            ProductLicenseDataSource license = (ProductLicenseDataSource)this.Resources["License"];
+            license.GroupTitle = itemGroupTitle;
         }
 
         private async void OnShootPhoto(object sender, RoutedEventArgs e)
@@ -144,6 +150,21 @@ namespace ContosoCookbook
             SecondaryTile tile = new SecondaryTile(new Guid().ToString(), item.Title, item.UniqueId, uri, TileSize.Square150x150);
             tile.VisualElements.ShowNameOnSquare150x150Logo = true;
             await tile.RequestCreateAsync();
+        }
+
+        async private void OnPurchaseProduct(object sender, RoutedEventArgs e)
+        {
+            // Check if this is a trial first, you can’t buy products in trial
+            if (CurrentAppSimulator.LicenseInformation.IsTrial)
+            {
+                await new Windows.UI.Popups.MessageDialog("Please go into About page in Settings and license first", "You must upgrade from trial first").ShowAsync();
+            }
+            else
+            {
+                // Purchase the ItalianRecipes product
+                ProductLicenseDataSource license = (ProductLicenseDataSource)this.Resources["License"];
+                license.PurchaseProduct("Italian");
+            }
         }
 
         void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
